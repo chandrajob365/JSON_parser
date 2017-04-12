@@ -20,7 +20,7 @@ var commaParser = function(str){
   str = spaceParser(str);
   console.log("Entry commaParser after spaceParser  : " , str);
   if(str.slice(0,1)== ','){
-    return str.slice(1);
+    return [',' , str.slice(1)];
   }
   return str ;
 }
@@ -49,6 +49,7 @@ var stringParser = function(str){
 }
 
 var arrayParser = function(str){
+  //var ouputArr =[];
   str = spaceParser(str);
   console.log("Entry arrayParser after spaceParser : " ,str);
   if(str[0]=='['){
@@ -57,15 +58,15 @@ var arrayParser = function(str){
     while(str[0]!=']'){
       console.log("str after while entry : " ,str);
       str = spaceParser(str);
-      if (str[0] == ",") {
-				str = str.slice(1);
-			}
       var res = parser(str);
-      temp.push(res[0]);
+      if (res[0] != ",") {
+				temp.push(res[0]);
+			}
       console.log("temp --->  " , temp);
       str = res[1];
+      str = spaceParser(res[1]);
     }
-    return temp;
+    return [temp , str.slice(1)];
   }
   return null;
 }
@@ -80,15 +81,15 @@ function parser(str){
  }else if(res = booleanParser(str.trim())){
    console.log("res from booleanParser : "  , res);
    return res[1] == '' ? res[0] : res;
- }else if(res= arrayParser(str.trim())){
-   console.log("res from arrayParser : "  , res);
-   return res;
  }else if(res = stringParser(str.trim())){
    console.log("res from stringParser : " , res);
    return res[1] == '' ? res[0] : res ;
+ }else if(res= arrayParser(str.trim())){
+   console.log("res from arrayParser : "  , res);
+   return res[1] == '' ? res[0] : res;
  }else if(res = commaParser(str)){
    console.log("res from commaParser : "  , res);
-   return res;
+   return res[1] == '' ? res[0] : res;
  }else{
    return "Unexpected Token : " + str;
  }
