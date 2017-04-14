@@ -89,22 +89,20 @@ function parser(str){
   var res;
   if(res=spaceParser(str)){
      return res[1] == '' ? res[0] : res;
-  }else if(res=nullParser(str)){
+  }if(res=nullParser(str)){
     return res[1] == '' ? res[0] : res;
- }else if(res = booleanParser(str.trim())){
+ }if(res = booleanParser(str.trim())){
    return res[1] == '' ? res[0] : res;
- }else if(res = stringParser(str.trim())){
+ }if(res = stringParser(str.trim())){
    return res[1] == '' ? res[0] : res ;
- }else if(res= arrayParser(str.trim())){
+ }if(res= arrayParser(str.trim())){
    return res[1] == '' ? res[0] : res;
- }else if(res = commaParser(str)){
+ }if(res = commaParser(str)){
    return res[1] == '' ? res[0] : res;
- }else if(res = numberParser(str)){
+ }if(res = numberParser(str)){
    return res[1] == '' ? res[0] : res ;
- }else if(res = objectParser(str)){
+ }if(res = objectParser(str)){
    return res[1] == '' ? res[0] : res ;
- }else{
-   return "Unexpected Token : " + str;
  }
 }
 
