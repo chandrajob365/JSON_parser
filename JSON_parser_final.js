@@ -3,12 +3,10 @@ const example = fs.readFileSync("./example.json").toString();
 
 var numRegex = /^[-+]?[0-9]*\.?[0-9]+[eE]?[-+]?[0-9]+/;
 var nullParser = function(str){
-  //str = spaceParser(str);
   return str.slice(0,4)=='null' ? [null ,str.slice(4)] : null;
 }
 
 var booleanParser = function(str){
-  //str = spaceParser(str);
   return str.slice(0,4)=='true' ? [true , str.slice(4)] :
                           (str.slice(0,5) == 'false' ?
                                                     [false ,str.slice(5)] :
@@ -16,7 +14,6 @@ var booleanParser = function(str){
 }
 
 var commaParser = function(str){
-  //str = spaceParser(str);
   if(str[0]== ','){
     return [',' , str.slice(1)];
   }
