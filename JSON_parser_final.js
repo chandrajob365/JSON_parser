@@ -1,12 +1,14 @@
 const fs = require('fs');
 const example = fs.readFileSync("./example.json").toString();
-
-var numRegex = /^[-+]?[0-9]*\.?[0-9]+[eE]?[-+]?[0-9]+/;
+console.log(example);
+var numRegex = /^[-+]?(\d+(\.\d*)?|\.\d+)([e][+-]?\d+)?/;
 var nullParser = function(str){
+  str = spaceParser(str);
   return str.slice(0,4)=='null' ? [null ,str.slice(4)] : null;
 }
 
 var booleanParser = function(str){
+  str = spaceParser(str);
   return str.slice(0,4)=='true' ? [true , str.slice(4)] :
                           (str.slice(0,5) == 'false' ?
                                                     [false ,str.slice(5)] :
@@ -14,6 +16,7 @@ var booleanParser = function(str){
 }
 
 var commaParser = function(str){
+  str = spaceParser(str);
   if(str[0]== ','){
     return [',' , str.slice(1)];
   }
@@ -24,10 +27,11 @@ var spaceParser = function(str){
   if(str.match(/\s/g)){
     return str.replace(/\s/ , '');
   }
-    return null;
+    return str;
 }
 
 var stringParser = function(str){
+  str = spaceParser(str);
   if(str[0]=='"'){
     str = str.slice(1);
     var end_index = str.indexOf('"');
@@ -40,22 +44,27 @@ var stringParser = function(str){
 }
 
 var arrayParser = function(str){
+  str = spaceParser(str);
   if(str[0]=='['){
     str = str.slice(1);
     var temp = [];
     while(str[0]!=']'){
+      str = spaceParser(str);
       var res = parser(str);
       if (res[0] != ",") {
 				temp.push(res[0]);
 			}
       str = res[1];
+      str = spaceParser(res[1]);
     }
     return [temp , str.slice(1)];
   }
   return null;
 }
 
+
 var numberParser = function(str){
+  str = spaceParser(str);
   var res;
   if(res = numRegex.exec(str)){
     res_len = res.index+res[0].length;
@@ -66,15 +75,19 @@ var numberParser = function(str){
 }
 
 var objectParser = function(str){
+  str = spaceParser(str);
   var outArrObj = {};
   if(str[0]=='{'){
     str = str.slice(1);
     while(str[0]!='}'){
+      str = spaceParser(str);
       var key = stringParser(str);
+      str = spaceParser(key[1]);
       if(str[0]==':'){
         str = str.slice(1);
       }
       value = parser(str);
+      str = spaceParser(value[1]);
       outArrObj[key[0]] = value[0];
       if(str[0]==','){
         str = str.slice(1);
@@ -85,24 +98,25 @@ var objectParser = function(str){
   return null;
 }
 
+
 function parser(str){
   var res;
-  if(res=spaceParser(str)){
-     return res[1] == '' ? res[0] : res;
-  }if(res=nullParser(str)){
+ if(res=nullParser(str)){
     return res[1] == '' ? res[0] : res;
- }if(res = booleanParser(str.trim())){
+ }else if(res = booleanParser(str.trim())){
    return res[1] == '' ? res[0] : res;
- }if(res = stringParser(str.trim())){
+ }else if(res = stringParser(str.trim())){
    return res[1] == '' ? res[0] : res ;
- }if(res= arrayParser(str.trim())){
+ }else if(res= arrayParser(str.trim())){
    return res[1] == '' ? res[0] : res;
- }if(res = commaParser(str)){
+ }else if(res = commaParser(str)){
    return res[1] == '' ? res[0] : res;
- }if(res = numberParser(str)){
+ }else if(res = numberParser(str)){
    return res[1] == '' ? res[0] : res ;
- }if(res = objectParser(str)){
+ }else if(res = objectParser(str)){
    return res[1] == '' ? res[0] : res ;
+ }else{
+   return "Unexpected Token : " + str;
  }
 }
 

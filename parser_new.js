@@ -1,7 +1,7 @@
 const fs = require('fs');
 const example = fs.readFileSync("./example.json").toString();
 console.log(example);
-var numRegex = /^[-+]?[0-9]*\.?[0-9]+[eE]?[-+]?[0-9]+/;
+var numRegex = /^[-+]?(\d+(\.\d*)?|\.\d+)([e][+-]?\d+)?/;
 var nullParser = function(str){
   str = spaceParser(str);
   console.log("Entry nullParser after spaceParser  : " , str);
@@ -50,7 +50,6 @@ var stringParser = function(str){
 }
 
 var arrayParser = function(str){
-  //var ouputArr =[];
   str = spaceParser(str);
   console.log("Entry arrayParser after spaceParser : " ,str);
   if(str[0]=='['){
@@ -72,6 +71,7 @@ var arrayParser = function(str){
   }
   return null;
 }
+
 
 var numberParser = function(str){
   str = spaceParser(str);
@@ -116,7 +116,7 @@ var objectParser = function(str){
   return null;
 }
 
-//console.log(stringParser("\'ab\'"));
+
 function parser(str){
   console.log("Parser Entry ---> " , str);
   var res;
@@ -139,7 +139,7 @@ function parser(str){
    console.log("res from numberParser : "  , res);
    return res[1] == '' ? res[0] : res ;
  }else if(res = objectParser(str)){
-   console.log("res from objectParser : "  , res);
+   console.log("res from numberParser : "  , res);
    return res[1] == '' ? res[0] : res ;
  }else{
    return "Unexpected Token : " + str;
