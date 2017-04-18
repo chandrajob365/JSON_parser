@@ -47,3 +47,20 @@ test_exec();
                     "total_turnOver" : 12.34e+6,
                     "profit" : 5.3e+6
                   }
+
+
+
+
+
+                  {"busines" : "private_schools" , "city" : 2 ,
+                    "items" : [true , false , 24 , "apple" ],
+                    "schools" : [
+                      {"school" : "DAV",
+                        "city": "daltonganj"},
+                      {"school" : "GGPS",
+                        "city" : "Ranchi"}
+                      ],
+                      "valuew" : -.3,
+                      "total_turnOver" : 12.34e+6,
+                      "profit" : 5.3e+6
+                    }
