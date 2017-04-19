@@ -36,26 +36,34 @@ var stringParser = function(str){
   return null
 }
 
-var arrayParser = function(str){
+/* Helper function for arrayParser */
+var helperArrayParser = function(str,temp){
+  if(str.length>0 && str[0]!=']'){
+    str = spaceParser(str)
+    var res = parser(str)
+    if(res==null) return null
+    if (res[0] != ",") temp.push(res[0])
+    str = res[1]
+    str = spaceParser(res[1])
+    var test
+    if(test=commaParser(str)){
+      if(!parser(test[1])) return null
+    }
+    if(str=='') return null
+    return helperArrayParser(str,temp)
+    }
+    return [spaceParser(str) , temp]
+}
 
+
+var arrayParser = function(str){
   str = spaceParser(str)
   if(str[0]=='['){
     str = spaceParser(str.slice(1))
-
     var temp = []
-    while(str.length>0 && str[0]!=']'){
-      str = spaceParser(str)
-      var res = parser(str)
-      if(res==null) return null
-      if (res[0] != ",") temp.push(res[0])
-      str = res[1]
-      str = spaceParser(res[1])
-      var test
-      if(test=commaParser(str)){
-        if(!parser(test[1])) return null
-      }
-      if(str=='') return null
-    }
+    var res = helperArrayParser(str,temp)
+    if(res==null) return null
+    else [str,temp] = res
     return [temp , str.slice(1)]
   }
   return null
@@ -85,26 +93,35 @@ var colonParser = function(str){
   return str[0] == ':' ? str.slice(1) : str
 }
 
+
+/* Helper function for objectParser */
+var helperObjectParser = function(str,outArrObj){
+  if(str.length>0 && str[0]!='}'){
+    var key = keyParser(str)
+    if(key==null) return null
+    str = colonParser(spaceParser(key[1]))
+    value = valueParser(str)
+    if(value==null) return null
+    str = spaceParser(value[1])
+    outArrObj[key[0]] = value[0]
+    if(str[0]==','){
+      str = str.slice(1)
+      if(keyParser(str)==null) return null
+    }
+      return helperObjectParser(str,outArrObj)
+    }
+    return [str, outArrObj]
+}
+
 var objectParser = function(str){
   str = spaceParser(str)
   var outArrObj={}
   if(str[0]=='{'){
     str = spaceParser(str.slice(1))
-    while(str.length>0 && str[0]!='}'){
-      var key = keyParser(str)
-      if(key==null) return null
-      str = colonParser(spaceParser(key[1]))
-      value = valueParser(str)
-      if(value==null) return null
-      str = spaceParser(value[1])
-      outArrObj[key[0]] = value[0]
-      if(str[0]==','){
-        str = str.slice(1)
-        if(keyParser(str)==null) return null
-      }
-    }
-    if(outArrObj!=undefined)
-      return [outArrObj , str.slice(1)]
+    var res = helperObjectParser(str,outArrObj)
+    if(!res) return null
+    else [str,outArrObj] = res
+    if(outArrObj!=undefined) return [outArrObj , str.slice(1)]
   }
   return null
 }
