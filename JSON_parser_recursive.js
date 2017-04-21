@@ -69,6 +69,7 @@ var arrayParser = function(input){
     var res = helperArrayParser(input,outArr)
     if(res===null) return null
     else [input,outArr] = res
+    if(input[0]!=']') return null       // checked validity for [
     return [outArr , input.slice(1)]
   }
   return null
