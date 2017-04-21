@@ -64,7 +64,7 @@ var arrayParser = function(input){
   input = spaceParser(input)
   if(input[0]=='['){
     input = spaceParser(input.slice(1))
-    if(commaParser(input)) return null   // checking validity for [,]
+    if(commaParser(input)) return null   // checked validity for [,]
     var outArr = []
     var res = helperArrayParser(input,outArr)
     if(res===null) return null
@@ -134,7 +134,7 @@ var objectParser = function(input){
     var res = helperObjectParser(input,outArrObj)
     if(!res) return null
     else [input,outArrObj] = res
-    if(input[0]!='}') return null    // checking validity for {
+    if(input[0]!='}') return null    // checked validity for {
     if(outArrObj!=undefined) return [outArrObj , input.slice(1)]
   }
   return null
