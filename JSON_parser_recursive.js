@@ -64,6 +64,7 @@ var arrayParser = function(input){
   input = spaceParser(input)
   if(input[0]=='['){
     input = spaceParser(input.slice(1))
+    if(commaParser(input)) return null   // checking validity for [,]
     var outArr = []
     var res = helperArrayParser(input,outArr)
     if(res===null) return null
@@ -94,45 +95,38 @@ var valueParser = function(input){
 }
 
 var colonParser = function(input){
-  return input[0] == ':' ? input.slice(1) : input
+  return input[0] == ':' ? [":",input.slice(1)] : null
 }
 
+var chkValidObject = function(input){
+  if(input[0]==','){
+    input = input.slice(1)
+    if(keyParser(input)==null) return null   // to check Validity of {"k1" : 23 , }
+  }else if(input[0]!==','){
+    if(keyParser(input)!==null && input[0]!=='}') return null // to check Validity of {"k1":23 "K2"}
+  }
+  return input;
+}
 
 /* Helper function for objectParser */
 var helperObjectParser = function(input,outArrObj){
   if(input.length>0 && input[0]!='}'){
     var key = keyParser(input)
-    console.log("key--->",key);
     if(key==null) return null
     input = colonParser(spaceParser(key[1]))
-    value = valueParser(input)
-    console.log("input--->",input);
-    console.log("value--->",value);
+    if(!input) return null
+    value = valueParser(spaceParser(input[1]))
     if(value==null) return null
     input = spaceParser(value[1])
-    console.log("spaceParser(value[1])--->",input[0]);
     outArrObj[key[0]] = value[0]
-    if(input[0]==','){
-      input = input.slice(1)
-      if(keyParser(input)==null) return null
-    }/*else if(input[0]!==','){
-      input = input.slice(1)
-      console.log("Inside input[0]!==','  input--->",input);
-      if(keyParser(input)!==null && input[0]!=='}') return null
-    }*/
-    /*if(input[0]!==',' && input[0]!=='}'){
-      console.log("Inside input[0]!==',' before slicing input--->",input[0]);
-      //input = input.slice(1)
-      console.log("Inside input[0]!==','  input--->",input);
-      if(keyParser(input.slice(1))!==null) return null
-    }*/
-      return helperObjectParser(input,outArrObj)
+    input = chkValidObject(input)
+    if(!input) return null
+    return helperObjectParser(input,outArrObj)
     }
     return [input, outArrObj]
 }
 
 var objectParser = function(input){
-  console.log("input--->",input);
   input = spaceParser(input)
   var outArrObj={}
   if(input[0]=='{'){
@@ -140,6 +134,7 @@ var objectParser = function(input){
     var res = helperObjectParser(input,outArrObj)
     if(!res) return null
     else [input,outArrObj] = res
+    if(input[0]!='}') return null    // checking validity for {
     if(outArrObj!=undefined) return [outArrObj , input.slice(1)]
   }
   return null
