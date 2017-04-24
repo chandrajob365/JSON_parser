@@ -1,5 +1,6 @@
   const fs = require('fs')
-  const example = fs.readFileSync('example.json').toString()
+  const path = require('path')
+  const example = fs.readFileSync(path.join(__dirname,'./example.json')).toString()
   var numRegex = /^[-+]?(\d+(\.\d*)?|\.\d+)([e][+-]?\d+)?/
 
   var nullParser = function (input) {
@@ -37,12 +38,12 @@
   var chkValidArray = function (res) {
     var input = spaceParser(res[1])
     var hasComma = commaParser(input)
-    if (input === '') return false  // to check for input of type [12 , 13 , or [12 , 13
+    if (input === '') return null  // to check for input of type [12 , 13 , or [12 , 13
     if (hasComma) {
-      if (!parser(spaceParser(hasComma[1]))) return false  // to check for input of type [12 , 14 , ]
+      if (!parser(spaceParser(hasComma[1]))) return null  // to check for input of type [12 , 14 , ]
     }
-    if (res[0] !== ',' && !hasComma && input[0] !== ']') return false // to check for input of type [12 , 13 14]
-    else return true
+    if (res[0] !== ',' && !hasComma && input[0] !== ']') return null // to check for input of type [12 , 13 14]
+    else return input
   }
 
   /* Helper function for arrayParser */
@@ -96,7 +97,7 @@
     return input[0] === ':' ? [':', input.slice(1)] : null
   }
 
-  var chkValidObject = function (input) {
+  var checkValidObject = function (input) {
     if (input[0] === ',') {
       input = input.slice(1)
       if (keyParser(input) === null) return null   // to check Validity of {"k1" : 23 , }
@@ -117,7 +118,7 @@
       if (value === null) return null
       input = spaceParser(value[1])
       outArrObj[key[0]] = value[0]
-      input = chkValidObject(input)
+      input = checkValidObject(input)
       if (!input) return null
       return helperObjectParser(input, outArrObj)
     }
