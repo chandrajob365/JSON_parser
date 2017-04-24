@@ -35,7 +35,7 @@
   }
 
   /* Array Validity Checker */
-  var chkValidArray = function (res) {
+  var checkValidArray = function (res) {
     var input = spaceParser(res[1])
     var hasComma = commaParser(input)
     if (input === '') return null  // to check for input of type [12 , 13 , or [12 , 13
@@ -53,7 +53,7 @@
       if (res === null) return null
       if (res[0] !== ',') outArr.push(res[0])
       input = spaceParser(res[1])
-      if (!chkValidArray(res)) return null
+      if (!checkValidArray(res)) return null
       return helperArrayParser(input, outArr)
     }
     return [spaceParser(input), outArr]
